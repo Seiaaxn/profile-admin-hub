@@ -25,6 +25,7 @@ export async function addXp(uid: string, amount: number) {
 }
 
 // Cooldown helper: only award XP for an episode once per user per 6h.
+// Premium users (admin emails or flagged premium) earn 5x XP.
 export async function awardWatchXp(uid: string, episodeId: string, amount = 10) {
   if (!uid || !episodeId) return false;
   const key = `xpLog/${uid}/${episodeId}`;
@@ -32,8 +33,18 @@ export async function awardWatchXp(uid: string, episodeId: string, amount = 10) 
   const last = snap.exists() ? Number(snap.val()) : 0;
   const SIX_H = 6 * 60 * 60 * 1000;
   if (Date.now() - last < SIX_H) return false;
+  // Check premium status (admin email or premium flag)
+  const [userSnap, flagsSnap] = await Promise.all([
+    get(ref(db, `users/${uid}/email`)),
+    get(ref(db, `userFlags/${uid}/premium`)),
+  ]);
+  const email = userSnap.val() as string | null;
+  const isPrem =
+    flagsSnap.val() === true ||
+    (email && ["ryu694602@gmail.com", "zeoxaeon@gmail.com"].includes(email.toLowerCase()));
+  const final = isPrem ? amount * 5 : amount;
   await set(ref(db, key), Date.now());
-  await addXp(uid, amount);
+  await addXp(uid, final);
   return true;
 }
 
@@ -61,25 +72,30 @@ export type PublicProfile = {
 };
 
 export async function upsertProfile(p: PublicProfile) {
-  // Only fill missing identity fields — never overwrite a user's
-  // custom displayName / photoURL on subsequent logins.
+  // Sync identity from Google login. Always refresh displayName/photoURL
+  // from the auth provider UNLESS the user has manually customized them
+  // (tracked via customDisplayName / customPhotoURL flags).
   const existing = (await get(ref(db, `users/${p.uid}`))).val() as
-    | Partial<PublicProfile>
+    | (Partial<PublicProfile> & { customDisplayName?: boolean; customPhotoURL?: boolean })
     | null;
   const patch: Record<string, unknown> = { updatedAt: serverTimestamp() };
-  if (!existing?.displayName && p.displayName) patch.displayName = p.displayName;
-  if (!existing?.photoURL && p.photoURL) patch.photoURL = p.photoURL;
+  if (p.displayName && !existing?.customDisplayName) patch.displayName = p.displayName;
+  if (p.photoURL && !existing?.customPhotoURL) patch.photoURL = p.photoURL;
   if (p.email && existing?.email !== p.email) patch.email = p.email;
   if (p.publicKey !== undefined && !existing?.publicKey) patch.publicKey = p.publicKey;
   await update(ref(db, `users/${p.uid}`), patch);
 }
 
-// Explicit edits from the profile owner — overwrites the given fields.
+// Explicit edits from the profile owner — overwrites the given fields
+// and marks them as custom so future Google logins don't reset them.
 export async function updateOwnProfile(
   uid: string,
   patch: { displayName?: string; photoURL?: string; bio?: string | null },
 ) {
-  await update(ref(db, `users/${uid}`), { ...patch, updatedAt: serverTimestamp() });
+  const out: Record<string, unknown> = { ...patch, updatedAt: serverTimestamp() };
+  if (patch.displayName !== undefined) out.customDisplayName = true;
+  if (patch.photoURL !== undefined) out.customPhotoURL = true;
+  await update(ref(db, `users/${uid}`), out);
 }
 
 // ============= Watch history =============

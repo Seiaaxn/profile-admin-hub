@@ -160,11 +160,18 @@ export function SideMenu({
               </li>
             )}
             {isAdmin(user?.email) && (
-              <li>
-                <Link to="/admin" onClick={close} className="flex items-center gap-3 h-11 px-3 rounded-xl hover:bg-secondary">
-                  <Shield className="h-5 w-5 text-destructive" /> Admin Panel
-                </Link>
-              </li>
+              <>
+                <li>
+                  <Link to="/admin" onClick={close} className="flex items-center gap-3 h-11 px-3 rounded-xl hover:bg-secondary">
+                    <Shield className="h-5 w-5 text-destructive" /> Admin Panel
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/admin/upload-anime" onClick={close} className="flex items-center gap-3 h-11 px-3 rounded-xl hover:bg-secondary">
+                    <Film className="h-5 w-5 text-primary" /> Upload Anime
+                  </Link>
+                </li>
+              </>
             )}
             <li>
               <Link to="/" onClick={close} className="flex items-center gap-3 h-11 px-3 rounded-xl hover:bg-secondary">
