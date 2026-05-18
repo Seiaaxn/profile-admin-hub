@@ -281,7 +281,7 @@ export function useAllProfiles() {
       const arr: Array<PublicProfile & { flags?: UserFlags }> = [];
       snap.forEach((c) => {
         const uid = c.key!;
-        arr.push({ uid, ...(c.val() as PublicProfile), flags: flagsMap[uid] });
+        arr.push({ ...(c.val() as PublicProfile), uid, flags: flagsMap[uid] });
       });
       setUsers(arr);
     });
