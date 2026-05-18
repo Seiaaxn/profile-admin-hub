@@ -56,6 +56,7 @@ export type PublicProfile = {
   displayName?: string | null;
   email?: string | null;
   photoURL?: string | null;
+  bio?: string | null;
   publicKey?: JsonWebKey | null;
 };
 
