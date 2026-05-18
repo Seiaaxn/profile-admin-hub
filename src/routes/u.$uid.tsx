@@ -127,6 +127,23 @@ function ProfilePage() {
     }
   };
 
+  const startEditBio = () => {
+    setBioDraft(profile?.bio || "");
+    setEditingBio(true);
+  };
+
+  const saveBio = async () => {
+    if (!user) return;
+    const v = bioDraft.trim().slice(0, 200);
+    try {
+      await updateOwnProfile(user.uid, { bio: v || null });
+      setEditingBio(false);
+      toast.success("Bio diperbarui.");
+    } catch (err) {
+      toast.error("Gagal: " + (err as Error).message);
+    }
+  };
+
   if (!profile) {
     return (
       <div className="min-h-screen grid place-items-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
