@@ -38,6 +38,9 @@ export function SideMenu({
 }) {
   const [open, setOpen] = useState(false);
   const { user, signInGoogle, logout } = useAuth();
+  const profile = useProfile(user?.uid);
+  const photoURL = profile?.photoURL || user?.photoURL || null;
+  const displayName = profile?.displayName || user?.displayName || "Pengguna";
 
   const close = () => setOpen(false);
   const handle = (fn?: () => void) => () => { fn?.(); close(); };
