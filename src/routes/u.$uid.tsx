@@ -345,7 +345,7 @@ function ProfilePage() {
                   <div className="p-2">
                     <div className="text-xs font-bold line-clamp-2">{h.title}</div>
                     <div className="text-[10px] text-muted-foreground mt-1">
-                      {new Date(h.ts).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                      {formatWatchDate(h.ts)}
                     </div>
                   </div>
                 </Link>
