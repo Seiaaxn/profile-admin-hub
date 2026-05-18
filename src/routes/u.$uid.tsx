@@ -23,6 +23,14 @@ export const Route = createFileRoute("/u/$uid")({
   component: ProfilePage,
 });
 
+function formatWatchDate(ts: unknown): string {
+  const n = typeof ts === "number" ? ts : typeof ts === "string" ? Number(ts) : NaN;
+  if (!n || !Number.isFinite(n) || n <= 0) return "Baru saja";
+  const d = new Date(n);
+  if (isNaN(d.getTime())) return "Baru saja";
+  return d.toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+
 function ProfilePage() {
   const { uid } = Route.useParams();
   const router = useRouter();
