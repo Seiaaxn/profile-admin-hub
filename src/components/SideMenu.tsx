@@ -72,14 +72,14 @@ export function SideMenu({
                 className="block group"
                 aria-label="Lihat profil saya"
               >
-                {user.photoURL ? (
-                  <img src={user.photoURL} alt="" className="mx-auto h-16 w-16 rounded-full border-2 border-primary group-hover:scale-105 transition-transform" />
+                {photoURL ? (
+                  <img src={photoURL} alt="" className="mx-auto h-16 w-16 rounded-full border-2 border-primary object-cover group-hover:scale-105 transition-transform" />
                 ) : (
                   <div className="mx-auto h-16 w-16 rounded-full bg-secondary grid place-items-center text-primary font-black text-xl">
-                    {user.displayName?.[0] ?? "U"}
+                    {displayName[0]}
                   </div>
                 )}
-                <p className="mt-3 font-bold group-hover:text-primary">{user.displayName || "Pengguna"}</p>
+                <p className="mt-3 font-bold group-hover:text-primary">{displayName}</p>
                 <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                 <p className="text-[10px] uppercase tracking-wider text-primary mt-1 opacity-80 group-hover:opacity-100">Lihat profil →</p>
               </Link>
