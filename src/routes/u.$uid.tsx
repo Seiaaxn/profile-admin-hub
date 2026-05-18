@@ -23,6 +23,14 @@ export const Route = createFileRoute("/u/$uid")({
   component: ProfilePage,
 });
 
+function formatWatchDate(ts: unknown): string {
+  const n = typeof ts === "number" ? ts : typeof ts === "string" ? Number(ts) : NaN;
+  if (!n || !Number.isFinite(n) || n <= 0) return "Baru saja";
+  const d = new Date(n);
+  if (isNaN(d.getTime())) return "Baru saja";
+  return d.toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+
 function ProfilePage() {
   const { uid } = Route.useParams();
   const router = useRouter();
@@ -186,8 +194,7 @@ function ProfilePage() {
                 <input
                   ref={fileRef}
                   type="file"
-                  accept="image/*"
-                  
+                  accept="image/png,image/jpeg,image/jpg,image/webp,image/gif"
                   className="hidden"
                   onChange={onPhotoChange}
                 />
@@ -346,7 +353,7 @@ function ProfilePage() {
                   <div className="p-2">
                     <div className="text-xs font-bold line-clamp-2">{h.title}</div>
                     <div className="text-[10px] text-muted-foreground mt-1">
-                      {new Date(h.ts).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                      {formatWatchDate(h.ts)}
                     </div>
                   </div>
                 </Link>
