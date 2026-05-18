@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/lib/useAuth";
+import { useProfile } from "@/lib/social";
 import { isAdmin } from "@/lib/roles";
 import { toast } from "sonner";
 
