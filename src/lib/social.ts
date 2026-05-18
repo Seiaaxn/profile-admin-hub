@@ -199,13 +199,20 @@ export function useFollowers(uid?: string) {
 }
 
 export function useProfile(uid?: string) {
-  const [profile, setProfile] = useState<PublicProfile | null>(null);
+  const [profile, setProfile] = useState<PublicProfile | null>(uid ? { uid } : null);
   useEffect(() => {
     if (!uid) { setProfile(null); return; }
-    const unsub = onValue(ref(db, `users/${uid}`), (snap) => {
-      const v = snap.val();
-      setProfile(v ? { uid, ...v } : { uid });
-    });
+    // Seed with placeholder so UI never gets stuck on a loader if RTDB is slow / empty.
+    setProfile((p) => (p && p.uid === uid ? p : { uid }));
+    const unsub = onValue(
+      ref(db, `users/${uid}`),
+      (snap) => {
+        const v = snap.val();
+        setProfile(v ? { uid, ...v } : { uid });
+      },
+      // On permission/network errors keep the placeholder so the page still renders.
+      () => setProfile((p) => p ?? { uid }),
+    );
     return () => unsub();
   }, [uid]);
   return profile;
