@@ -186,8 +186,7 @@ function ProfilePage() {
                 <input
                   ref={fileRef}
                   type="file"
-                  accept="image/*"
-                  
+                  accept="image/png,image/jpeg,image/jpg,image/webp,image/gif"
                   className="hidden"
                   onChange={onPhotoChange}
                 />
