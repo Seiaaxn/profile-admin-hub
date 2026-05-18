@@ -38,6 +38,8 @@ function ProfilePage() {
   const [uploading, setUploading] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [nameDraft, setNameDraft] = useState("");
+  const [editingBio, setEditingBio] = useState(false);
+  const [bioDraft, setBioDraft] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   // Self profile sync (only fills missing fields — won't overwrite custom photo/name).
