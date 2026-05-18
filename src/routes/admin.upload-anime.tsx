@@ -53,7 +53,7 @@ function AdminUploadAnime() {
     if (!allowed) return;
     const unsub = onValue(ref(db, "customAnimes"), (snap) => {
       const arr: AnimeRow[] = [];
-      snap.forEach((c) => arr.push({ id: c.key!, ...(c.val() as Omit<AnimeRow, "id">) }));
+      snap.forEach((c) => { arr.push({ id: c.key!, ...(c.val() as Omit<AnimeRow, "id">) }); });
       arr.sort((a, b) => (b.ts ?? 0) - (a.ts ?? 0));
       setList(arr);
     });
