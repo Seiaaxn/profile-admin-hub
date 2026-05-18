@@ -61,25 +61,30 @@ export type PublicProfile = {
 };
 
 export async function upsertProfile(p: PublicProfile) {
-  // Only fill missing identity fields — never overwrite a user's
-  // custom displayName / photoURL on subsequent logins.
+  // Sync identity from Google login. Always refresh displayName/photoURL
+  // from the auth provider UNLESS the user has manually customized them
+  // (tracked via customDisplayName / customPhotoURL flags).
   const existing = (await get(ref(db, `users/${p.uid}`))).val() as
-    | Partial<PublicProfile>
+    | (Partial<PublicProfile> & { customDisplayName?: boolean; customPhotoURL?: boolean })
     | null;
   const patch: Record<string, unknown> = { updatedAt: serverTimestamp() };
-  if (!existing?.displayName && p.displayName) patch.displayName = p.displayName;
-  if (!existing?.photoURL && p.photoURL) patch.photoURL = p.photoURL;
+  if (p.displayName && !existing?.customDisplayName) patch.displayName = p.displayName;
+  if (p.photoURL && !existing?.customPhotoURL) patch.photoURL = p.photoURL;
   if (p.email && existing?.email !== p.email) patch.email = p.email;
   if (p.publicKey !== undefined && !existing?.publicKey) patch.publicKey = p.publicKey;
   await update(ref(db, `users/${p.uid}`), patch);
 }
 
-// Explicit edits from the profile owner — overwrites the given fields.
+// Explicit edits from the profile owner — overwrites the given fields
+// and marks them as custom so future Google logins don't reset them.
 export async function updateOwnProfile(
   uid: string,
   patch: { displayName?: string; photoURL?: string; bio?: string | null },
 ) {
-  await update(ref(db, `users/${uid}`), { ...patch, updatedAt: serverTimestamp() });
+  const out: Record<string, unknown> = { ...patch, updatedAt: serverTimestamp() };
+  if (patch.displayName !== undefined) out.customDisplayName = true;
+  if (patch.photoURL !== undefined) out.customPhotoURL = true;
+  await update(ref(db, `users/${uid}`), out);
 }
 
 // ============= Watch history =============
