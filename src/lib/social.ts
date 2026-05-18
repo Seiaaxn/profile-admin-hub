@@ -77,7 +77,7 @@ export async function upsertProfile(p: PublicProfile) {
 // Explicit edits from the profile owner — overwrites the given fields.
 export async function updateOwnProfile(
   uid: string,
-  patch: { displayName?: string; photoURL?: string },
+  patch: { displayName?: string; photoURL?: string; bio?: string | null },
 ) {
   await update(ref(db, `users/${uid}`), { ...patch, updatedAt: serverTimestamp() });
 }
