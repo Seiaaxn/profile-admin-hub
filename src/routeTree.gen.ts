@@ -14,6 +14,7 @@ import { Route as TosRouteImport } from './routes/tos'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as DmcaRouteImport } from './routes/dmca'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WatchEpisodeIdRouteImport } from './routes/watch.$episodeId'
 import { Route as UUidRouteImport } from './routes/u.$uid'
@@ -47,6 +48,11 @@ const HomeRoute = HomeRouteImport.update({
 const DmcaRoute = DmcaRouteImport.update({
   id: '/dmca',
   path: '/dmca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -97,6 +103,7 @@ const UUidFollowersRoute = UUidFollowersRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/dmca': typeof DmcaRoute
   '/home': typeof HomeRoute
   '/search': typeof SearchRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/dmca': typeof DmcaRoute
   '/home': typeof HomeRoute
   '/search': typeof SearchRoute
@@ -130,6 +138,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/dmca': typeof DmcaRoute
   '/home': typeof HomeRoute
   '/search': typeof SearchRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/dmca'
     | '/home'
     | '/search'
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/dmca'
     | '/home'
     | '/search'
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/dmca'
     | '/home'
     | '/search'
@@ -197,6 +209,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   DmcaRoute: typeof DmcaRoute
   HomeRoute: typeof HomeRoute
   SearchRoute: typeof SearchRoute
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       path: '/dmca'
       fullPath: '/dmca'
       preLoaderRoute: typeof DmcaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -327,6 +347,7 @@ const UUidRouteWithChildren = UUidRoute._addFileChildren(UUidRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   DmcaRoute: DmcaRoute,
   HomeRoute: HomeRoute,
   SearchRoute: SearchRoute,
