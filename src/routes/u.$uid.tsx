@@ -227,6 +227,47 @@ function ProfilePage() {
           </div>
           <p className="text-xs text-muted-foreground mt-1">{profile.email}</p>
 
+          {/* Bio */}
+          <div className="mt-4 max-w-md mx-auto">
+            {editingBio ? (
+              <div className="flex flex-col gap-2">
+                <textarea
+                  value={bioDraft}
+                  onChange={(e) => setBioDraft(e.target.value)}
+                  maxLength={200}
+                  rows={3}
+                  autoFocus
+                  placeholder="Tulis sesuatu tentang dirimu..."
+                  className="w-full bg-secondary rounded-lg p-3 text-sm outline-none border border-border focus:border-primary resize-none"
+                />
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-muted-foreground">{bioDraft.length}/200</span>
+                  <div className="flex gap-2">
+                    <button onClick={saveBio} className="inline-flex items-center gap-1 h-8 px-3 rounded-lg bg-primary text-primary-foreground text-xs font-bold">
+                      <Check className="h-3.5 w-3.5" /> Simpan
+                    </button>
+                    <button onClick={() => setEditingBio(false)} className="inline-flex items-center gap-1 h-8 px-3 rounded-lg bg-secondary text-xs font-bold">
+                      <X className="h-3.5 w-3.5" /> Batal
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : profile.bio ? (
+              <div className="group relative rounded-lg bg-secondary/40 border border-border p-3 text-sm whitespace-pre-wrap">
+                {profile.bio}
+                {isMe && (
+                  <button onClick={startEditBio} aria-label="Ubah bio" className="absolute top-1 right-1 h-7 w-7 grid place-items-center rounded-md hover:bg-secondary text-muted-foreground opacity-0 group-hover:opacity-100">
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+            ) : isMe ? (
+              <button onClick={startEditBio} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary">
+                <FileText className="h-3.5 w-3.5" /> Tambah bio
+              </button>
+            ) : null}
+          </div>
+
           {/* Level bar */}
           <div className="mt-4 max-w-xs mx-auto">
             <div className="flex items-center justify-between text-xs mb-1">
