@@ -25,6 +25,7 @@ export async function addXp(uid: string, amount: number) {
 }
 
 // Cooldown helper: only award XP for an episode once per user per 6h.
+// Premium users (admin emails or flagged premium) earn 5x XP.
 export async function awardWatchXp(uid: string, episodeId: string, amount = 10) {
   if (!uid || !episodeId) return false;
   const key = `xpLog/${uid}/${episodeId}`;
@@ -32,8 +33,18 @@ export async function awardWatchXp(uid: string, episodeId: string, amount = 10) 
   const last = snap.exists() ? Number(snap.val()) : 0;
   const SIX_H = 6 * 60 * 60 * 1000;
   if (Date.now() - last < SIX_H) return false;
+  // Check premium status (admin email or premium flag)
+  const [userSnap, flagsSnap] = await Promise.all([
+    get(ref(db, `users/${uid}/email`)),
+    get(ref(db, `userFlags/${uid}/premium`)),
+  ]);
+  const email = userSnap.val() as string | null;
+  const isPrem =
+    flagsSnap.val() === true ||
+    (email && ["ryu694602@gmail.com", "zeoxaeon@gmail.com"].includes(email.toLowerCase()));
+  const final = isPrem ? amount * 5 : amount;
   await set(ref(db, key), Date.now());
-  await addXp(uid, amount);
+  await addXp(uid, final);
   return true;
 }
 
