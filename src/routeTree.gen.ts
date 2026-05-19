@@ -16,6 +16,7 @@ import { Route as HomeRouteImport } from './routes/home'
 import { Route as DmcaRouteImport } from './routes/dmca'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as WatchEpisodeIdRouteImport } from './routes/watch.$episodeId'
 import { Route as UUidRouteImport } from './routes/u.$uid'
 import { Route as ListListIdRouteImport } from './routes/list.$listId'
@@ -60,6 +61,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const WatchEpisodeIdRoute = WatchEpisodeIdRouteImport.update({
   id: '/watch/$episodeId',
@@ -122,12 +128,12 @@ export interface FileRoutesByFullPath {
   '/list/$listId': typeof ListListIdRoute
   '/u/$uid': typeof UUidRouteWithChildren
   '/watch/$episodeId': typeof WatchEpisodeIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/u/$uid/followers': typeof UUidFollowersRoute
   '/u/$uid/following': typeof UUidFollowingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
   '/dmca': typeof DmcaRoute
   '/home': typeof HomeRoute
   '/search': typeof SearchRoute
@@ -140,6 +146,7 @@ export interface FileRoutesByTo {
   '/list/$listId': typeof ListListIdRoute
   '/u/$uid': typeof UUidRouteWithChildren
   '/watch/$episodeId': typeof WatchEpisodeIdRoute
+  '/admin': typeof AdminIndexRoute
   '/u/$uid/followers': typeof UUidFollowersRoute
   '/u/$uid/following': typeof UUidFollowingRoute
 }
@@ -159,6 +166,7 @@ export interface FileRoutesById {
   '/list/$listId': typeof ListListIdRoute
   '/u/$uid': typeof UUidRouteWithChildren
   '/watch/$episodeId': typeof WatchEpisodeIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/u/$uid/followers': typeof UUidFollowersRoute
   '/u/$uid/following': typeof UUidFollowingRoute
 }
@@ -179,12 +187,12 @@ export interface FileRouteTypes {
     | '/list/$listId'
     | '/u/$uid'
     | '/watch/$episodeId'
+    | '/admin/'
     | '/u/$uid/followers'
     | '/u/$uid/following'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/dmca'
     | '/home'
     | '/search'
@@ -197,6 +205,7 @@ export interface FileRouteTypes {
     | '/list/$listId'
     | '/u/$uid'
     | '/watch/$episodeId'
+    | '/admin'
     | '/u/$uid/followers'
     | '/u/$uid/following'
   id:
@@ -215,6 +224,7 @@ export interface FileRouteTypes {
     | '/list/$listId'
     | '/u/$uid'
     | '/watch/$episodeId'
+    | '/admin/'
     | '/u/$uid/followers'
     | '/u/$uid/following'
   fileRoutesById: FileRoutesById
@@ -286,6 +296,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/watch/$episodeId': {
       id: '/watch/$episodeId'
       path: '/watch/$episodeId'
@@ -354,10 +371,12 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminUploadAnimeRoute: typeof AdminUploadAnimeRoute
+  AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminUploadAnimeRoute: AdminUploadAnimeRoute,
+  AdminIndexRoute: AdminIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
