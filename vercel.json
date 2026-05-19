@@ -1,12 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
+  "outputDirectory": "dist/client",
   "installCommand": "npm install --legacy-peer-deps --no-audit --no-fund",
   "framework": null,
   "rewrites": [
     {
-      "source": "/((?!api|favicon.ico|assets/).*)",
+      "source": "/((?!api/|assets/|favicon.ico|robots.txt|sitemap.xml).*)",
       "destination": "/api/ssr"
     }
   ]
