@@ -92,9 +92,19 @@ export async function updateOwnProfile(
   uid: string,
   patch: { displayName?: string; photoURL?: string; bio?: string | null },
 ) {
-  const out: Record<string, unknown> = { ...patch, updatedAt: serverTimestamp() };
-  if (patch.displayName !== undefined) out.customDisplayName = true;
-  if (patch.photoURL !== undefined) out.customPhotoURL = true;
+  const out: Record<string, unknown> = { updatedAt: serverTimestamp() };
+  if (patch.displayName !== undefined) {
+    out.displayName = patch.displayName;
+    out.customDisplayName = true;
+  }
+  if (patch.photoURL !== undefined) {
+    out.photoURL = patch.photoURL;
+    out.customPhotoURL = true;
+  }
+  if (patch.bio !== undefined) {
+    // Firebase RTDB: null deletes the key on update()
+    out.bio = patch.bio;
+  }
   await update(ref(db, `users/${uid}`), out);
 }
 
