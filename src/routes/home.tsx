@@ -111,21 +111,35 @@ function Home() {
         const safe = <T,>(name: string, p: Promise<T>, fallback: T): Promise<T> =>
           p.catch((e) => { console.warn("api err", name, e); failed.push(name); return fallback; });
 
-        const [home, pop, ong, comp, mov, sch, gen] = await Promise.all([
+        const [home, pop1, pop2, ong1, ong2, comp1, comp2, mov1, mov2, mov3, sch, gen] = await Promise.all([
           safe("Home", svHome(), { recent: [], popular: [], top10: [] }),
-          safe("Popular", svPopular(), [] as SvAnime[]),
-          safe("Ongoing", svOngoing(), [] as SvAnime[]),
-          safe("Completed", svCompleted(), [] as SvAnime[]),
-          safe("Movies", svMovies(), [] as SvAnime[]),
+          safe("Popular", svPopular(1), [] as SvAnime[]),
+          safe("Popular2", svPopular(2), [] as SvAnime[]),
+          safe("Ongoing", svOngoing(1), [] as SvAnime[]),
+          safe("Ongoing2", svOngoing(2), [] as SvAnime[]),
+          safe("Completed", svCompleted(1), [] as SvAnime[]),
+          safe("Completed2", svCompleted(2), [] as SvAnime[]),
+          safe("Movies", svMovies(1), [] as SvAnime[]),
+          safe("Movies2", svMovies(2), [] as SvAnime[]),
+          safe("Movies3", svMovies(3), [] as SvAnime[]),
           safe("Schedule", svSchedule(), [] as { day: string; animeList: SvAnime[] }[]),
           safe("Genres", svGenres(), [] as { title: string; genreId: string }[]),
         ]);
         if (!alive) return;
         if (failed.length) toast.error(`Beberapa data gagal dimuat: ${failed.join(", ")}`);
 
+        const dedup = (arr: SvAnime[]) => {
+          const seen = new Set<string>();
+          return arr.filter((a) => (seen.has(a.animeId) ? false : (seen.add(a.animeId), true)));
+        };
+        const pop = dedup([...pop1, ...pop2]);
+        const ong = dedup([...ong1, ...ong2]);
+        const comp = dedup([...comp1, ...comp2]);
+        const mov = dedup([...mov1, ...mov2, ...mov3]);
+
         const recentCards = home.recent.map(svToCard);
         setRecent(recentCards);
-        setSpotlight(recentCards.slice(0, 6));
+        setSpotlight(recentCards.slice(0, 8));
         setTop10(home.top10.map(svToCard));
         setPopular(pop.map(svToCard));
         setOngoing(ong.map(svToCard));
