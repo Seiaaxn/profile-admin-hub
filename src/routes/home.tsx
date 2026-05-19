@@ -272,14 +272,28 @@ function Home() {
             {popular.length > 0 && (
               <section id="section-popular" className="scroll-mt-20">
                 <SectionTitle title="Populer" onViewMore={() => nav({ to: "/list/$listId", params: { listId: "popular" } })} />
-                <PortraitGrid items={popular.slice(0, 12)} onClick={watchAnime} />
+                <PortraitGrid items={popular.slice(0, 24)} onClick={watchAnime} />
               </section>
             )}
 
             {movies.length > 0 && (
               <section id="section-movies" className="scroll-mt-20">
                 <SectionTitle title="Movies" onViewMore={() => nav({ to: "/list/$listId", params: { listId: "movies" } })} />
-                <PortraitGrid items={movies.slice(0, 12)} onClick={watchAnime} />
+                <PortraitGrid items={movies.slice(0, 30)} onClick={watchAnime} />
+              </section>
+            )}
+
+            {ongoing.length > 0 && (
+              <section className="scroll-mt-20">
+                <SectionTitle title="Sedang Tayang" onViewMore={() => nav({ to: "/list/$listId", params: { listId: "ongoing" } })} />
+                <PortraitGrid items={ongoing.slice(0, 18)} onClick={watchAnime} />
+              </section>
+            )}
+
+            {completed.length > 0 && (
+              <section className="scroll-mt-20">
+                <SectionTitle title="Selesai Tayang" onViewMore={() => nav({ to: "/list/$listId", params: { listId: "completed" } })} />
+                <PortraitGrid items={completed.slice(0, 18)} onClick={watchAnime} />
               </section>
             )}
 
